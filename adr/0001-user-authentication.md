@@ -1,4 +1,4 @@
-# ADR 0001: User Authentication & Authorization
+# ADR 0001: User Authentication
 **Date:** 2025-05-29
 
 The application currently allows any visitor to create, edit, delete, upload, and play tracks without restriction. As the number of users increases, the lack of access control creates risks:
