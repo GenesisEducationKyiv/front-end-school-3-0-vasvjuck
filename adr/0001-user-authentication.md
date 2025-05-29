@@ -3,7 +3,7 @@
 
 The application currently allows any visitor to create, edit, delete, upload, and play tracks without restriction. As the number of users increases, the lack of access control creates risks:
 
-- **Security**: unauthorized users may maliciously delete or modify tracks, upload harmful files, or access sensitive data.  
+- **Security**: unauthorized users may maliciously delete or modify tracks, upload files.
 - **Auditability**: we cannot trace who performed which operations, making debugging impossible.  
 - **Cost & Time-to-Market**: we need a solution that can be stood up quickly, with low ongoing maintenance overhead and minimal infrastructure costs.
 
@@ -12,7 +12,7 @@ At the same time, we want to keep our stack simple (Next.js, React Query, Shadcn
 ---
 
 ## Decision
-We will use **Clerk** as the end-to-end authentication and authorization platform. **Clerk** will handle:
+We will use **Clerk** as authentication and authorization platform. **Clerk** will handle:
 
 1. **Authentication & Sign-In Flows**  
 - Email & Password 
@@ -24,14 +24,14 @@ We will use **Clerk** as the end-to-end authentication and authorization platfor
 
 2. **User Management & Roles**
 - hosted admin dashboard for user provisioning, role assignment, and audit log review.
-- built-in support for role-based access control
+- built-in support for role-based access control.
 
 3. **Integration & Developer Experience**
 - official `@clerk/nextjs` SDK with ready-made React components, hooks, and middleware.
 - minimal boilerplate and zero self-hosted infrastructure.
 
 4. **Security & Compliance**
-- secure session cookies, token rotation.
+- secure session.
 - support for MFA and GDPR compliance.
 
 ---
@@ -39,20 +39,17 @@ We will use **Clerk** as the end-to-end authentication and authorization platfor
 ## Rationale
 
 1. **Feature Coverage & Speed**  
-   - Clerk delivers credentials + social OAuth, MFA, password resets, email verification, audit logs, and a no-code admin UI—all out of the box.  
+   - Clerk delivers credentials + social OAuth, MFA, password resets, email verification, audit logs, and a no-code admin UI—all.  
    - a custom NextAuth.js + admin dashboard solution was estimated at 2+ weeks; Clerk integration takes < 1 week.
 
-2. **Developer Experience**  
-   - official `@clerk/nextjs` SDK provides React components, hooks, and middleware with zero boilerplate.  
+2. **Developer Experience**   
    - dashboard empowers non-technical team members (support, product) to manage users without shipping custom tooling.
    - Clerk components are easily styled and customized to match  Shadcn/ui + Tailwind CSS, we have in use
 
 3. **Security & Compliance**  
-   - Clerk handles secure session cookies, token rotation, and audit trails.  
-   - built-in MFA and GDPR support help satisfy enterprise and regulatory requirements.
+   - built-in GDPR support help satisfy enterprise and regulatory requirements.
 
 4. **Operational Overhead & Cost**  
-   - serverless-friendly, no self-hosted infrastructure.  
    - predictable SaaS pricing; minor monthly cost justified by reduced engineering and maintenance effort.
 
 ### Rejected Alternatives 
@@ -70,7 +67,7 @@ We will use **Clerk** as the end-to-end authentication and authorization platfor
 ---
 
 ## Status
-**Proposed** – pending team review and approval.  
+**Proposed** – pending team review and approval.
 
 ---
 
@@ -80,9 +77,9 @@ We will use **Clerk** as the end-to-end authentication and authorization platfor
 - rapid deployment of robust, secure auth flows (credentials + Google OAuth).  
 - built-in user management dashboard - no custom admin UI to build or maintain.  
 - audit logs, MFA, and compliance features handled by Clerk.  
-- seamless Next.js integration with Clerk SDK and middleware.  
+- seamless Next.js integration with Clerk SDK.  
 
 ### Negative
-- introduces a commercial SaaS dependency and recurring cost.  
-- limited ability to fully customize login UX beyond Clerk’s component theming.  
+- introduces a commercial SaaS dependency and recurring cost. While pricing starts low, it could scale up with user count or enterprise features
 - brief downtime or API changes at Clerk could impact our users if not monitored.
+- migrating away from Clerk later would require significant effort
