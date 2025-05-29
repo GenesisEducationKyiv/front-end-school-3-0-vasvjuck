@@ -39,18 +39,18 @@ We will use **Clerk** as authentication and authorization platform. **Clerk** wi
 ## Rationale
 
 1. **Feature Coverage & Speed**  
-   - Clerk delivers credentials + social OAuth, MFA, password resets, email verification, audit logs, and a no-code admin UI—all.  
-   - a custom NextAuth.js + admin dashboard solution was estimated at 2+ weeks; Clerk integration takes < 1 week.
+- Clerk delivers credentials + social OAuth, MFA, password resets, email verification, audit logs, and a no-code admin UI—all.  
+- a custom NextAuth.js + admin dashboard solution was estimated at 2+ weeks; Clerk integration takes < 1 week.
 
 2. **Developer Experience**   
-   - dashboard empowers non-technical team members (support, product) to manage users without shipping custom tooling.
-   - Clerk components are easily styled and customized to match  Shadcn/ui + Tailwind CSS, we have in use
+- dashboard empowers non-technical team members (support, product) to manage users without shipping custom tooling.
+- Clerk components are easily styled and customized to match  Shadcn/ui + Tailwind CSS, we have in use
 
 3. **Security & Compliance**  
-   - built-in GDPR support help satisfy enterprise and regulatory requirements.
+- built-in GDPR support help satisfy enterprise and regulatory requirements.
 
 4. **Operational Overhead & Cost**  
-   - predictable SaaS pricing; minor monthly cost justified by reduced engineering and maintenance effort.
+- predictable SaaS pricing; minor monthly cost justified by reduced engineering and maintenance effort.
 
 ### Rejected Alternatives 
 
