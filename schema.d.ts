@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { trackSchema } from '@/lib/validations/trackSchema';
-import { trackFileSchema } from '@/lib/validations/trackFileSchema';
 
 export type TrackInput = z.infer<typeof trackSchema>;
 
