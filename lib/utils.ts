@@ -20,6 +20,6 @@ export const isApiError = (err: unknown): err is ApiError => {
     typeof err === "object" &&
     err !== null &&
     "message" in err &&
-    typeof (err as any).message === "string"
+    typeof err.message === "string"
   );
 }
