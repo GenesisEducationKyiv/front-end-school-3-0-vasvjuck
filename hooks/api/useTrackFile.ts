@@ -1,4 +1,3 @@
-
 import {
     useMutation,
     useQueryClient,
@@ -18,7 +17,7 @@ export const useUploadTrackFile = (
             queryClient.invalidateQueries({ queryKey: trackKeys.lists() }),
         ...options,
     });
-}
+};
 
 export const useRemoveTrackFile = (
     trackId: string,
@@ -31,4 +30,4 @@ export const useRemoveTrackFile = (
             queryClient.invalidateQueries({ queryKey: trackKeys.lists() }),
         ...options,
     });
-}
+};

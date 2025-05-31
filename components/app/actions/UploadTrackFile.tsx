@@ -26,6 +26,7 @@ import { useUploadTrackFile, useRemoveTrackFile } from "@/hooks/api/useTrackFile
 import { registerAndToggle } from "@/lib/common/audioManager";
 import { FileInput, fileSchema } from "@/lib/validations/trackFileSchema";
 import { Track } from "@/schema";
+import { isApiError } from "@/lib/utils";
 
 interface UploadTrackFileProps {
     track: Track;
@@ -60,8 +61,12 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
             await upload.mutateAsync(file);
             toast.success("Audio file uploaded.");
             reset();
-        } catch (err: any) {
-            toast.error("Upload failed", { description: err.message });
+        } catch (err) {
+            if (isApiError(err)) {
+                toast.error("Upload failed", { description: err.message });
+            } else {
+                toast.error("Upload failed", { description: "Unknown error" });
+            }
         }
     };
 
@@ -69,8 +74,12 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
         try {
             await remove.mutateAsync();
             toast.success("Audio file removed.");
-        } catch (err: any) {
-            toast.error("Remove failed", { description: err.message });
+        } catch (err) {
+            if (isApiError(err)) {
+                toast.error("Upload failed", { description: err.message });
+            } else {
+                toast.error("Upload failed", { description: "Unknown error" });
+            }
         }
     };
 

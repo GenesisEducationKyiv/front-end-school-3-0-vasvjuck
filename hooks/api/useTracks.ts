@@ -39,11 +39,10 @@ export const useTracks = (
 ): UseQueryResult<TrackList, ApiError> => {
     return useQuery<TrackList, ApiError, TrackList>({
         queryKey: trackKeys.list(params),
-        // @ts-ignore
         queryFn: () => tracksApi.get(params),
         ...options,
-    })
-}
+    });
+};
 
 export const useCreateTrack = (
     options?: MutationConfig<Track, TrackInput>

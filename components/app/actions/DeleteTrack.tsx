@@ -5,7 +5,7 @@ import { Trash2Icon } from "lucide-react";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useDeleteTrack } from "@/hooks/api/useTracks";
-
+import type { ApiError } from '@/schema';
 interface DeleteTrackProps {
     trackId: string;
     trackTitle: string;
@@ -21,7 +21,7 @@ export const DeleteTrack = ({ trackId, trackTitle }: DeleteTrackProps) => {
                     description: `${trackTitle} was successfully deleted.`,
                 });
             },
-            onError: (error: any) => {
+            onError: (error: ApiError) => {
                 toast.error("Deletion failed", {
                     description: error?.message || "Unable to delete track.",
                 });
