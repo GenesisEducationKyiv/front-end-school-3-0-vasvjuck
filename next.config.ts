@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*' },
     ],
   },
-  async redirects() {
+  redirects() {
     return [
       {
         source: '/',

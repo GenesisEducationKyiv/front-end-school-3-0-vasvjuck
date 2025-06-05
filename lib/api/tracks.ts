@@ -46,20 +46,21 @@ export const tracksApi = {
     deleteAll: async (ids: string[]): Promise<void> => {
         await api.post<void>(`${BASE_URL}/delete`, { ids });
     },
-
-    uploadFile: async (id: string, file: File) => {
+    uploadFile: async (id: string, file: File): Promise<Track> => {
         const formData = new FormData();
         formData.append("file", file);
-        const { data } = await api.post(`/api/tracks/${id}/upload`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
+
+        const { data } = await api.post<Track>(
+            `/api/tracks/${id}/upload`,
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
         return data;
     },
 
-    deleteFile: async (id: string) => {
-        const { data } = await api.delete(`/api/tracks/${id}/file`);
+    deleteFile: async (id: string): Promise<Track> => {
+        const { data } = await api.delete<Track>(`/api/tracks/${id}/file`);
         return data;
     },
 };

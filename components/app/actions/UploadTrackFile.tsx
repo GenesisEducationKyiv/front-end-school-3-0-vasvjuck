@@ -93,7 +93,9 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
     useEffect(() => {
         const audioEl = audioRef.current;
         if (!audioEl) return;
-        if (isPlaying) audioEl.play();
+        if (isPlaying) audioEl.play().catch(error => {
+            console.error('Failed to play audio:', error);
+        });
         else audioEl.pause();
     }, [isPlaying]);
 
@@ -117,7 +119,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                     </DialogHeader>
                     {!track?.audioFile ? (
                         <ShadcnForm {...form}>
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                            <form onSubmit={void handleSubmit(onSubmit)} className="space-y-4">
                                 <FormItem>
                                     <FormLabel>Select File</FormLabel>
                                     <FormControl>
@@ -165,7 +167,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={handleRemove}
+                                onClick={void handleRemove}
                                 disabled={remove.isPending}
                             >
                                 <Trash2 className="mr-1" size={16} />
@@ -174,7 +176,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                         </div>
                     )}
                 </DialogContent>
-            </Dialog>
+            </Dialog >
         </>
     );
 };

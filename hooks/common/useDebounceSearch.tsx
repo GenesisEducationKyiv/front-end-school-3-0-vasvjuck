@@ -5,7 +5,7 @@ export const useDebouncedSearch = (value: string, delay = 300) => {
     const [debounced, setDebounced] = useState(value);
 
     const debouncer = useMemo(
-        () => debounce((val) => setDebounced(val), delay),
+        () => debounce((val) => setDebounced(val as string), delay),
         [delay]
     );
 

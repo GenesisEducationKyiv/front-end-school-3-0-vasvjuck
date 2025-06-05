@@ -12,7 +12,7 @@ export const useUploadTrackFile = (
 ) => {
     const queryClient = useQueryClient();
     return useMutation<Track, ApiError, FileInput>({
-        mutationFn: (file) => tracksApi.uploadFile(trackId, file),
+        mutationFn: (file: File) => tracksApi.uploadFile(trackId, file),
         onSuccess: () =>
             queryClient.invalidateQueries({ queryKey: trackKeys.lists() }),
         ...options,
