@@ -26,6 +26,7 @@ import { useUploadTrackFile, useRemoveTrackFile } from "@/hooks/api/useTrackFile
 import { registerAndToggle } from "@/lib/common/audioManager";
 import { FileInput, fileSchema } from "@/lib/validations/trackFileSchema";
 import { Track } from "@/schema";
+import { isApiError } from "@/lib/utils";
 
 interface UploadTrackFileProps {
     track: Track;
@@ -60,8 +61,12 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
             await upload.mutateAsync(file);
             toast.success("Audio file uploaded.");
             reset();
-        } catch (err: any) {
-            toast.error("Upload failed", { description: err.message });
+        } catch (err) {
+            if (isApiError(err)) {
+                toast.error("Upload failed", { description: err.message });
+            } else {
+                toast.error("Upload failed", { description: "Unknown error" });
+            }
         }
     };
 
@@ -69,8 +74,12 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
         try {
             await remove.mutateAsync();
             toast.success("Audio file removed.");
-        } catch (err: any) {
-            toast.error("Remove failed", { description: err.message });
+        } catch (err) {
+            if (isApiError(err)) {
+                toast.error("Upload failed", { description: err.message });
+            } else {
+                toast.error("Upload failed", { description: "Unknown error" });
+            }
         }
     };
 
@@ -84,7 +93,9 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
     useEffect(() => {
         const audioEl = audioRef.current;
         if (!audioEl) return;
-        if (isPlaying) audioEl.play();
+        if (isPlaying) audioEl.play().catch(error => {
+            console.error('Failed to play audio:', error);
+        });
         else audioEl.pause();
     }, [isPlaying]);
 
@@ -108,7 +119,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                     </DialogHeader>
                     {!track?.audioFile ? (
                         <ShadcnForm {...form}>
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                            <form onSubmit={() => handleSubmit(onSubmit)} className="space-y-4">
                                 <FormItem>
                                     <FormLabel>Select File</FormLabel>
                                     <FormControl>
@@ -156,7 +167,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={handleRemove}
+                                onClick={() => void handleRemove()}
                                 disabled={remove.isPending}
                             >
                                 <Trash2 className="mr-1" size={16} />

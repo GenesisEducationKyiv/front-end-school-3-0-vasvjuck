@@ -53,7 +53,6 @@ export const Form = ({
 
     const { append, remove } = useFieldArray({
         control: form.control,
-        // @ts-ignore
         name: "genres",
     })
 
@@ -67,7 +66,7 @@ export const Form = ({
     return (
         <ShadcnForm {...form} data-testid="track-form">
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={() => form.handleSubmit(onSubmit)}
                 className="w-full space-y-3"
             >
                 <FormField

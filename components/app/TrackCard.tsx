@@ -28,7 +28,9 @@ export const TrackCard = ({ track }: TrackProps) => {
         const audioEl = audioRef.current;
         if (!audioEl) return;
         if (isPlaying) {
-            audioEl.play();
+            audioEl.play().catch(error => {
+                console.error('Failed to play audio:', error);
+            });
         } else {
             audioEl.pause();
         }
