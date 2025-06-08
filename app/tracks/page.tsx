@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTracks } from '@/hooks/api/useTracks';
 import { useGenres } from '@/hooks/api/useGenres';
 import { useDebouncedSearch } from '@/hooks/common/useDebounceSearch';
@@ -15,15 +16,34 @@ import { toast } from 'sonner';
 import { BulkActions } from '@/components/app/actions/BulkActions';
 
 export default function MusicPage() {
-  const [page, setPage] = useState(1);
-  const [sort, setSort] = useState('createdAt');
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-  const [genre, setGenre] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const getParam = (key, fallback) => {
+    const val = searchParams.get(key);
+    return val ?? fallback;
+  };
+
+  const [page, setPage] = useState(Number(getParam('page', '1')));
+  const [sort, setSort] = useState(getParam('sort', 'createdAt'));
+  const [order, setOrder] = useState<'asc' | 'desc'>(getParam('order', 'desc') as 'asc' | 'desc');
+  const [genre, setGenre] = useState(getParam('genre', 'All'));
+  const [searchTerm, setSearchTerm] = useState(getParam('search', ''));
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const debouncedSearch = useDebouncedSearch(searchTerm);
   const limit = 8;
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', String(page));
+    if (sort !== 'createdAt') params.set('sort', sort);
+    if (order !== 'desc') params.set('order', order);
+    if (genre !== 'All') params.set('genre', genre);
+    if (searchTerm) params.set('search', searchTerm);
+
+    router.replace(`?${params.toString()}`);
+  }, [page, sort, order, genre, searchTerm, router]);
 
   const { data, isLoading } = useTracks({
     page,
@@ -54,14 +74,15 @@ export default function MusicPage() {
   const handleSortChange = (val: string) => { setSort(val); setPage(1); };
   const handleGenreChange = (val: string) => { setGenre(val); setPage(1); };
   const toggleOrder = () => {
-    setOrder(order => (order === 'asc' ? 'desc' : 'asc')); setPage(1);
+    setOrder(order => (order === 'asc' ? 'desc' : 'asc'));
+    setPage(1);
   };
 
   const confirmDelete = () => {
     deleteMutation(selectedIds, {
       onSuccess: () => {
         toast.success("Tracks were successfully deleted");
-        setSelectedIds([])
+        setSelectedIds([]);
       },
       onError: () => toast.error("Deletion failed"),
     });
