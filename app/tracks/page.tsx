@@ -35,18 +35,6 @@ export default function MusicPage() {
 
   const debouncedSearch = useDebouncedSearch(searchTerm);
   const limit = 8;
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (page > 1) params.set('page', String(page));
-    if (sort !== 'createdAt') params.set('sort', sort);
-    if (order !== 'desc') params.set('order', order);
-    if (genre !== 'All') params.set('genre', genre);
-    if (searchTerm) params.set('search', searchTerm);
-
-    router.replace(`?${params.toString()}`);
-  }, [page, sort, order, genre, searchTerm, router]);
-
   const { data: result, isLoading } = useTracksV2({
     page,
     limit,
@@ -99,6 +87,17 @@ export default function MusicPage() {
       onError: () => toast.error("Deletion failed"),
     });
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', String(page));
+    if (sort !== 'createdAt') params.set('sort', sort);
+    if (order !== 'desc') params.set('order', order);
+    if (genre !== 'All') params.set('genre', genre);
+    if (searchTerm) params.set('search', searchTerm);
+
+    router.replace(`?${params.toString()}`);
+  }, [page, sort, order, genre, searchTerm, router]);
 
   return (
     <div className="flex gap-5 flex-col h-[calc(100vh-112px)]">
