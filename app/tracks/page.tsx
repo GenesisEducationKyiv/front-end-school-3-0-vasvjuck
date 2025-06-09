@@ -68,7 +68,7 @@ export default function MusicPage() {
   const { pages, goTo } = usePagination(totalPages, page, setPage);
   const { mutate: deleteMutation } = useDeleteTracks();
 
-  const allIds = useMemo(() => trackList?.data?.map((t) => t.id), [trackList]);
+  const allIds = useMemo(() => trackList.data.map(t => t.id), [trackList]);
   const isAllSelected = selectedIds.length > 0 && selectedIds.length === allIds.length;
 
   const handleSelectAll = (checked: boolean) => setSelectedIds(checked ? allIds : []);
@@ -93,10 +93,10 @@ export default function MusicPage() {
   const confirmDelete = () => {
     deleteMutation(selectedIds, {
       onSuccess: () => {
-        toast.success('Tracks were successfully deleted');
+        toast.success("Tracks were successfully deleted");
         setSelectedIds([]);
       },
-      onError: () => toast.error('Deletion failed'),
+      onError: () => toast.error("Deletion failed"),
     });
   };
 
