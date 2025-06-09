@@ -31,7 +31,7 @@ export type MutationConfig<
     'mutationFn'
 >;
 
-type TrackList = { data: Track[]; meta: Meta };
+export type TrackList = { data: Track[]; meta: Meta };
 
 export const useTracks = (
     params?: TrackParams,
