@@ -167,7 +167,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={handleRemove}
+                                onClick={() => void handleRemove()}
                                 disabled={remove.isPending}
                             >
                                 <Trash2 className="mr-1" size={16} />
