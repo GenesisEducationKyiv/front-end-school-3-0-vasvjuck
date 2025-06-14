@@ -1,52 +1,56 @@
-## DEPENDENCY SECURITY AUDIT
+# Dependency Security Audit – Musicvvv Frontend
 
 **Date:** June 13, 2025
 
 ---
 
-### 1. Purpose  
-Audit front‑end dependencies used in `Musicvvv`, focusing on identifying packages with active vulnerabilities and recommending a secure replacement where needed.
+## 1. Purpose
+This document audits all front-end dependencies used in `Musicvvv`, identifying any packages with known vulnerabilities, assessing their security posture, and recommending replacements if necessary.
 
 ---
 
-### 2. Scope & Affected Packages  
-Among the dependencies audited, only **`axios`** has a known critical vulnerability:
+## 2. Scope & Affected Packages
+During the audit, all dependencies were evaluated for known vulnerabilities.
+
+### Identified Vulnerability
 
 | Package | Version | CVE | Severity | Description | Fixed In |
 |--------|---------|-----|----------|-------------|----------|
-| axios | ^1.8.4 | CVE‑2025‑27152 | High (7.5) | SSRF & credential leakage when absolute URLs passed—even when `baseURL` is set. | 1.8.2+ |
+| axios | ^1.8.4 | CVE‑2025‑27152 | High (7.5) | SSRF & credential leakage when absolute URLs are passed—even if `baseURL` is set. | 1.8.2+ |
 
-*No other dependencies, including `@radix‑ui`, showed known vulnerabilities in Snyk or GitHub advisories.
-
----
-
-### 3. Zero‑Day Vulnerability Policy  
-- Monitoring: Dependabot, Snyk, security mailing lists  
-- Review: Within 24 hours of alert  
-- For high/critical issues: block builds and apply patch or replacement immediately
+All other packages, including `@radix-ui` components and UI libraries, are free of known vulnerabilities as of the audit date.
 
 ---
 
-### 4. Recommendation: Replace `axios` with `ky`
+## 3. Zero-Day Vulnerability Policy
+To ensure long-term security compliance, `Musicvvv` follows this policy:
 
-#### 4.1 Why `ky`?  
-- Built atop the native Fetch API (no bundled dependencies → smaller attack surface)  
-- Actively maintained and lightweight  
-- Automatically inherits browser’s security posture
-
-#### 4.2 Security Evaluation Steps  
-1. **Dependency health**: checked `ky`’s GitHub activity and latest releases ► active maintenance  
-2. **Vulnerability scan**: Snyk and npm audit show no known issues in latest `ky` versions  
-3. **Code analysis**: examined source on GitHub – minimal surface area, no internal parsing or URL normalization flaws  
-4. **License check**: MIT licensed  
-5. **Surface analysis**: no transitive dependencies that introduce risk
+- **Monitoring Tools**: `Dependabot`, `CodeQL`.
+- **Critical Handling**: high/critical issues trigger blocked builds and immediate patching or dependency replacement.
 
 ---
 
-### 5. Audit Summary Table  
+## 4. Recommended Change – Replace `axios` with `ky`
+
+### Why Replace?
+- `axios` currently has an active high-severity vulnerability (SSRF).
+- `ky` offers a safer and more modern alternative, built on top of the Fetch API.
+
+### Security Assessment of `ky`
+
+1. **Maintenance**: actively maintained with regular releases.
+2. **Audit Results**: no known vulnerabilities reported on Snyk/npm audit.
+3. **Code Review**: minimal code surface area and no unsafe URL parsing logic.
+4. **License**: MIT – safe for commercial and open-source use.
+5. **Dependencies**: zero transitive dependencies – minimizes attack surface.
+
+---
+
+## 5. Audit Summary
 
 | Package | Status | Action |
 |--------|--------|--------|
-| axios | High-severity SSRF (CVE‑2025‑27152) | Replacing with `ky` |
-| All others | No known issues | Continued monitoring via CI tools |
+| axios |  CVE‑2025‑27152 – High | ✅ Replace with `ky` |
+| All others | ✅ No known vulnerabilities | 🔁 Ongoing monitoring via CI/CD security tools |
 
+---
