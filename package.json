@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "generate:types": "openapi-typescript ./openapi.json --output ./lib/api/types.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "test-ct": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
+    "@playwright/experimental-ct-react": "^1.53.1",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
