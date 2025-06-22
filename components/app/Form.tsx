@@ -64,55 +64,59 @@ export const Form = ({
             : "/track_placeholder.png"
 
     return (
-        <ShadcnForm {...form} data-testid="track-form">
+        <ShadcnForm {...form} >
             <form
+                data-testid="track-form"
                 onSubmit={() => form.handleSubmit(onSubmit)}
                 className="w-full space-y-3"
             >
                 <FormField
-                    data-testid="input-title"
                     control={form.control}
                     name="title"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Title</FormLabel>
                             <FormControl>
-                                <Input placeholder="Track title" {...field} />
+                                <Input
+                                    data-testid="input-title" placeholder="Track title" {...field}
+                                />
                             </FormControl>
                             <FormMessage data-testid="error-title" />
                         </FormItem>
                     )}
                 />
                 <FormField
-                    data-testid="input-artist"
                     control={form.control}
                     name="artist"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Artist</FormLabel>
                             <FormControl>
-                                <Input placeholder="Artist name" {...field} />
+                                <Input
+                                    data-testid="input-artist" placeholder="Artist name" {...field}
+                                />
                             </FormControl>
                             <FormMessage data-testid="error-artist" />
                         </FormItem>
                     )}
                 />
                 <FormField
-                    data-testid="input-album"
                     control={form.control}
                     name="album"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Album</FormLabel>
                             <FormControl>
-                                <Input placeholder="Album name" {...field} />
+                                <Input
+                                    data-testid="input-album"
+                                    placeholder="Album name" {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <FormField
-                    data-testid="genre-selector"
                     control={form.control}
                     name="genres"
                     render={() => (
@@ -131,7 +135,11 @@ export const Form = ({
                                 ))}
                                 <Popover>
                                     <PopoverTrigger asChild>
-                                        <Button size="sm" variant="outline" className="inline-flex items-center">
+                                        <Button
+                                            size="sm"
+                                            variant="outline" className="inline-flex items-center"
+                                            data-testid="genre-selector"
+                                        >
                                             <Plus size={16} className="mr-1" /> Add Genre
                                         </Button>
                                     </PopoverTrigger>
@@ -164,15 +172,16 @@ export const Form = ({
                     )}
                 />
                 <FormField
-                    data-testid="input-cover-image"
                     control={form.control}
                     name="coverImage"
                     render={({ field }) => (
                         <div className="flex gap-3">
-                            <FormItem className="w-full">
+                            <FormItem
+                            >
                                 <FormLabel>Cover Image URL</FormLabel>
                                 <FormControl>
                                     <Input
+                                        data-testid="input-cover-image"
                                         placeholder="https://example.com/cover.jpg"
                                         {...field}
                                     />
