@@ -1,4 +1,3 @@
-// tests/EditTrack.e2e.spec.ts
 import { test, expect, Page } from '@playwright/test';
 
 const mockTrack = {
@@ -12,7 +11,6 @@ const mockTrack = {
 };
 
 async function mockListTracks(page: Page) {
-    // Intercept any GET to /api/tracks
     await page.route('**/api/tracks**', (route, request) => {
         if (request.method() === 'GET') {
             return route.fulfill({
@@ -27,12 +25,8 @@ async function mockListTracks(page: Page) {
 
 async function mockUpdateTrack(page: Page, expectedBody) {
     let called = false;
-    // Broaden pattern to catch PUT to any /api/tracks/{id}
     await page.route('**/api/tracks/**', async (route, request) => {
-        if (request.method() !== 'PUT')
-            return route.continue();
 
-        // verify payload
         const url = request.url();
         expect(url).toMatch(/\/api\/tracks\/${mockTrack.id}$/);
         const body = await request.postDataJSON();
@@ -50,11 +44,9 @@ test.describe('Edit Track E2E', () => {
     });
 
     test('should open edit dialog, submit changes, and show success toast', async ({ page }) => {
-        // 1) list stub
         const card = page.getByTestId(`track-item-${mockTrack.id}`);
         await expect(card).toBeVisible();
 
-        // 2) prepare new values
         const newValues = {
             id: mockTrack.id,
             title: 'Updated Title',
@@ -65,15 +57,12 @@ test.describe('Edit Track E2E', () => {
             audioFile: null,
         };
 
-        // 3) stub PUT
         const wasCalled = await mockUpdateTrack(page, newValues);
 
-        // 4) open edit dialog
         await page.getByTestId(`edit-track-${mockTrack.id}`).click();
         const form = page.getByTestId('track-form');
         await expect(form).toBeVisible();
 
-        // 5) fill inputs
         await form.getByTestId('input-title').fill(newValues.title);
         await form.getByTestId('input-artist').fill(newValues.artist);
         await form.getByTestId('input-album').fill(newValues.album);

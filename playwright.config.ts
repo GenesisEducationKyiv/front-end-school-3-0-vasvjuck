@@ -10,7 +10,6 @@ export default defineConfig({
   use: {
     trace: 'on-first-retry',
   },
-
   projects: [
     {
       name: 'chromium',
