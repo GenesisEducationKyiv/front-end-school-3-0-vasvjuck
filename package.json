@@ -9,8 +9,9 @@
     "lint": "next lint",
     "generate:types": "openapi-typescript ./openapi.json --output ./lib/api/types.ts",
     "test": "vitest",
+    "test:ui": "npx playwright test --ui",
     "test-ct": "playwright test -c playwright-ct.config.ts",
-    "test-ctui": "playwright test -c playwright-ct.config.ts --ui"
+    "test-ct:ui": "playwright test -c playwright-ct.config.ts --ui"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
