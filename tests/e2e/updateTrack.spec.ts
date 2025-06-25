@@ -1,79 +1,96 @@
-import { test, expect, Page } from '@playwright/test';
-
-const mockTrack = {
-    id: 'track-123',
-    title: 'Original Title',
-    artist: 'Original Artist',
-    album: 'Original Album',
-    genres: ['Rock'],
-    coverImage: '',
-    audioFile: null,
-};
-
-async function mockListTracks(page: Page) {
-    await page.route('**/api/tracks**', (route, request) => {
-        if (request.method() === 'GET') {
-            return route.fulfill({
-                status: 200,
-                contentType: 'application/json',
-                body: JSON.stringify({ data: [mockTrack], meta: { totalPages: 1 } }),
-            });
-        }
-        return route.continue();
-    });
-}
-
-async function mockUpdateTrack(page: Page, expectedBody) {
-    let called = false;
-    await page.route('**/api/tracks/**', async (route, request) => {
-
-        const url = request.url();
-        expect(url).toMatch(/\/api\/tracks\/${mockTrack.id}$/);
-        const body = await request.postDataJSON();
-        expect(body).toEqual(expectedBody);
-        called = true;
-        await route.fulfill({ status: 200 });
-    });
-    return () => called;
-}
+import { test, expect } from '@playwright/test';
 
 test.describe('Edit Track E2E', () => {
+    const mockTrack = {
+        id: 'track-123',
+        title: 'Original Title',
+        artist: 'Original Artist',
+        album: 'Original Album',
+        genres: ['Rock'],
+        coverImage: '',
+        audioFile: null,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z'
+    };
+
     test.beforeEach(async ({ page }) => {
-        await mockListTracks(page);
-        await page.goto('http://localhost:3000');
+        await page.route('**/api/genres**', route =>
+            route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify(['Rock', 'Pop', 'Jazz']),
+            })
+        );
+
+        await page.route('**/api/tracks**', route =>
+            route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    data: [mockTrack],
+                    meta: { totalPages: 1, total: 1, page: 1, limit: 8 }
+                }),
+            })
+        );
+
+        await page.goto('http://localhost:3000/tracks');
+        await page.waitForLoadState('networkidle');
     });
 
-    test('should open edit dialog, submit changes, and show success toast', async ({ page }) => {
-        const card = page.getByTestId(`track-item-${mockTrack.id}`);
-        await expect(card).toBeVisible();
-
-        const newValues = {
-            id: mockTrack.id,
-            title: 'Updated Title',
-            artist: 'Updated Artist',
-            album: 'Updated Album',
-            genres: ['Rock'],
-            coverImage: 'https://picsum.photos/300/200',
-            audioFile: null,
-        };
-
-        const wasCalled = await mockUpdateTrack(page, newValues);
-
+    test('should open edit dialog and show form', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
         await page.getByTestId(`edit-track-${mockTrack.id}`).click();
-        const form = page.getByTestId('track-form');
-        await expect(form).toBeVisible();
+        await expect(page.getByTestId('track-form')).toBeVisible();
+        await expect(page.getByTestId('input-title')).toHaveValue(mockTrack.title);
+        await expect(page.getByTestId('input-artist')).toHaveValue(mockTrack.artist);
+        await expect(page.getByTestId('input-album')).toHaveValue(mockTrack.album);
+    });
 
-        await form.getByTestId('input-title').fill(newValues.title);
-        await form.getByTestId('input-artist').fill(newValues.artist);
-        await form.getByTestId('input-album').fill(newValues.album);
-        await form.getByTestId('input-cover-image').fill(newValues.coverImage);
+    test('should close dialog when clicking outside', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
+        await page.getByTestId(`edit-track-${mockTrack.id}`).click();
+        await expect(page.getByTestId('track-form')).toBeVisible();
+        await page.click('body', { position: { x: 0, y: 0 } });
+        await expect(page.getByTestId('track-form')).not.toBeVisible();
+    });
 
-        // 6) submit and wait for PUT
-        // await form.getByTestId('submit-button').click();
+    test('should display genre selector with available genres', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
+        await page.getByTestId(`edit-track-${mockTrack.id}`).click();
+        await page.getByTestId('genre-selector').click();
+        await expect(page.getByRole('option', { name: 'Pop' })).toBeVisible();
+        await expect(page.getByRole('option', { name: 'Jazz' })).toBeVisible();
+    });
 
-        // 7) assertions
-        // await expect(page.getByText(/Updated Title updated\./)).toBeVisible();
-        // expect(wasCalled()).toBeTruthy();
-        // await expect(form).toBeHidden();
+    test('should show cover image preview', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
+        await page.getByTestId(`edit-track-${mockTrack.id}`).click();
+        await expect(page.getByTestId('input-cover-image')).toBeVisible();
+        await expect(page.locator('img[alt="Cover preview"]')).toBeVisible();
+    });
+
+    test('should allow editing track metadata', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
+        await page.getByTestId(`edit-track-${mockTrack.id}`).click();
+        await expect(page.getByTestId('input-title')).toBeVisible();
+        await expect(page.getByTestId('input-artist')).toBeVisible();
+        await expect(page.getByTestId('input-album')).toBeVisible();
+        await expect(page.getByTestId('input-cover-image')).toBeVisible();
+        await expect(page.getByTestId('genre-selector')).toBeVisible();
+        await expect(page.getByTestId('submit-button')).toBeVisible();
+        await expect(page.getByTestId('submit-button')).toHaveText('Save changes');
+    });
+
+    test('should allow filling form fields', async ({ page }) => {
+        await expect(page.getByTestId(`track-item-${mockTrack.id}`)).toBeVisible();
+        await page.getByTestId(`edit-track-${mockTrack.id}`).click();
+        await page.getByTestId('input-title').fill('New Title');
+        await page.getByTestId('input-artist').fill('New Artist');
+        await page.getByTestId('input-album').fill('New Album');
+        await page.getByTestId('input-cover-image').fill('https://example.com/image.jpg');
+        await expect(page.getByTestId('input-title')).toHaveValue('New Title');
+        await expect(page.getByTestId('input-artist')).toHaveValue('New Artist');
+        await expect(page.getByTestId('input-album')).toHaveValue('New Album');
+        await expect(page.getByTestId('input-cover-image')).toHaveValue('https://example.com/image.jpg');
     });
 });

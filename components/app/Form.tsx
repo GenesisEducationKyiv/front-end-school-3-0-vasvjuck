@@ -53,7 +53,7 @@ export const Form = ({
 
     const { append, remove } = useFieldArray({
         control: form.control,
-        name: "genres",
+        name: "genres" as keyof TrackInput,
     })
 
     const selectedGenres = form.watch("genres") || []
