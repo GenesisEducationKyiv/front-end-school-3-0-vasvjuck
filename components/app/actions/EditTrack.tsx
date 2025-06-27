@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/app/Form";
 import { toast } from "sonner";
 import { useUpdateTrack } from "@/hooks/api/useTracks";
-import { Track, TrackInput } from '@/schema'
+import type { Track, TrackInput } from '@/schema'
 interface EditTrackProps {
     track: Track;
 }

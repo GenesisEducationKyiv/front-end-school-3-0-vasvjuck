@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { PlusCircle } from "lucide-react";
 import {
     Dialog,
@@ -11,10 +11,12 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/app/Form";
 import { toast } from "sonner";
 import { useCreateTrack } from "@/hooks/api/useTracks";
-import { TrackInput } from '@/schema'
+import type { TrackInput } from '@/schema'
+
+const Form = lazy(() => import("@/components/app/Form").then(mod => ({ default: mod.Form })));
+
 export const CreateTrack = () => {
     const [open, setOpen] = useState(false);
 
@@ -53,8 +55,19 @@ export const CreateTrack = () => {
                         Enter metadata for your new track.
                     </DialogDescription>
                 </DialogHeader>
-                <Form onSubmit={onSubmit} />
+                <Suspense fallback={<div className="space-y-4">
+                    <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                </div>}>
+                    <Form onSubmit={onSubmit} />
+                </Suspense>
             </DialogContent>
         </Dialog >
     );
-}
+};

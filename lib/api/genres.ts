@@ -1,5 +1,5 @@
 import { api } from "./client";
-import { paths } from "./types";
+import type { paths } from "./types";
 
 type GenreList = paths["/api/genres"]["get"]["responses"]["200"]["content"]["application/json"];
 

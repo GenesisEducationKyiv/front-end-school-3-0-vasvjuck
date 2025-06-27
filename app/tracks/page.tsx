@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useGenres } from '@/hooks/api/useGenres';
 import { useDebouncedSearch } from '@/hooks/common/useDebounceSearch';
@@ -14,8 +14,9 @@ import { SORT_OPTIONS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { BulkActions } from '@/components/app/actions/BulkActions';
 import { useTrackStore } from '@/store/useTrackStore';
+import type { Track } from '@/schema';
 
-export default function MusicPage() {
+function TracksPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -73,12 +74,15 @@ export default function MusicPage() {
 
   const { data: genres = [] } = useGenres();
   const fallback = { data: [], meta: { totalPages: 1 } };
-  const trackList = result ? result : fallback;
-  const totalPages = trackList.meta.totalPages;
+  const trackList = result ?? fallback;
+  const totalPages = trackList.meta?.totalPages ?? 1;
   const { pages, goTo } = usePagination(totalPages, page, setPage);
   const { mutate: deleteMutation } = useDeleteTracks();
 
-  const allIds = useMemo(() => trackList.data.map(t => t.id), [trackList]);
+  const allIds = useMemo(() =>
+    trackList.data?.filter(t => t.id).map(t => t.id!) ?? [],
+    [trackList]
+  );
   const isAllSelected = selectedIds.length > 0 && selectedIds.length === allIds.length;
 
   const handleSelectAll = (checked: boolean) => {
@@ -134,7 +138,7 @@ export default function MusicPage() {
       <Separator />
       <div className="flex-grow overflow-y-auto">
         <TracksList
-          tracks={trackList.data}
+          tracks={trackList.data?.filter(t => t.id) as Track[] ?? []}
           isLoading={isLoading}
           selectedIds={selectedIds}
           onSelect={handleSelectOne}
@@ -142,5 +146,13 @@ export default function MusicPage() {
       </div>
       <PaginationControls pages={pages} currentPage={page} goTo={goTo} />
     </div>
+  );
+}
+
+export default function MusicPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TracksPageContent />
+    </Suspense>
   );
 }

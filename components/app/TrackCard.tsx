@@ -1,13 +1,13 @@
 import Image from "next/image";
-import { PlayIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DeleteTrack } from "./actions/DeleteTrack";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { EditTrack } from "./actions/EditTrack";
 import { UploadTrackFile } from "./actions/UploadTrackFile";
 import { registerAndToggle } from "@/lib/common/audioManager";
 import { cn } from "@/lib/utils";
-import { Track } from '@/schema'
+import type { Track } from '@/schema'
+
+const AudioPlayer = lazy(() => import('./AudioPlayer'));
 
 interface TrackProps extends React.HTMLAttributes<HTMLDivElement> {
     track: Track;
@@ -53,38 +53,13 @@ export const TrackCard = ({ track }: TrackProps) => {
                                 track.audioFile && "blur-xs")}
                         />
                         {track.audioFile && (
-                            <div data-testid={`audio-player-${track?.id}`}>
-                                <Button
-                                    data-testid={!isPlaying ? `play-button-${track?.id}` : `pause-button-${track?.id}`}
-                                    variant="link"
-                                    size="icon"
-                                    onClick={toggleAudio}
-                                    className="absolute inset-0 m-auto flex items-center justify-center gap-0.5 bg-secondary rounded-full"
-                                >
-                                    <audio
-                                        ref={audioRef}
-                                        className="hidden"
-                                        src={audioUrl}
-                                    />
-                                    {isPlaying ? (
-                                        <React.Fragment
-                                            data-testid={`audio-progress-${track?.id}`}
-                                        >
-                                            {
-                                                [1, 2, 3, 4].map(bar => (
-                                                    <div
-                                                        key={bar}
-                                                        className="indicator-line active"
-                                                        style={{ animationDelay: `${bar * 0.1}s` }}
-                                                    />
-                                                ))
-                                            }
-                                        </React.Fragment>
-                                    ) : (
-                                        <PlayIcon size={16} />
-                                    )}
-                                </Button>
-                            </div>
+                            <Suspense fallback={<div className="absolute inset-0 m-auto flex items-center justify-center bg-secondary rounded-full w-8 h-8" />}>
+                                <AudioPlayer
+                                    trackId={track.id}
+                                    isPlaying={isPlaying}
+                                    onToggle={toggleAudio}
+                                />
+                            </Suspense>
                         )}
                     </div>
                 </div>
@@ -113,6 +88,15 @@ export const TrackCard = ({ track }: TrackProps) => {
                     </div>
                 </div>
             </div >
+            {track.audioFile && (
+                <audio
+                    ref={audioRef}
+                    className="hidden"
+                    src={audioUrl}
+                />
+            )}
         </div >
     );
 };
+
+export default TrackCard;

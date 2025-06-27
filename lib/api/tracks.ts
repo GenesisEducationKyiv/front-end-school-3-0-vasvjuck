@@ -1,6 +1,6 @@
 import { api } from "./client";
-import { paths } from "./types";
-import { Track } from '@/schema';
+import type { paths } from "./types";
+import type { Track } from '@/schema';
 type TrackList = paths["/api/tracks"]["get"]["responses"]["200"]["content"]["application/json"];
 
 export interface TrackQueryParams {

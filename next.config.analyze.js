@@ -1,19 +1,23 @@
-import type { NextConfig } from "next";
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: false,
+  reportFilename: './bundle-analysis.html',
+});
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*' },
     ],
   },
   redirects() {
-    return Promise.resolve([
+    return [
       {
         source: '/',
         destination: '/tracks',
         permanent: false,
       },
-    ]);
+    ];
   },
   experimental: {
     serverActions: {
@@ -23,4 +27,4 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: true,
 };
 
-export default nextConfig;
+module.exports = withBundleAnalyzer(nextConfig); 

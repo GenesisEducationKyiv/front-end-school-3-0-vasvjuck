@@ -2,6 +2,8 @@ import {
     useQuery,
     useMutation,
     useQueryClient,
+} from '@tanstack/react-query';
+import type {
     UseQueryOptions,
     UseMutationOptions,
     UseQueryResult,
@@ -12,8 +14,8 @@ import type {
     TrackParams,
     TrackInput,
     ApiError,
-    Meta,
 } from '@/schema';
+import type { paths } from '@/lib/api/types';
 
 export const trackKeys = {
     all: ['tracks'] as const,
@@ -31,7 +33,7 @@ export type MutationConfig<
     'mutationFn'
 >;
 
-export type TrackList = { data: Track[]; meta: Meta };
+export type TrackList = paths["/api/tracks"]["get"]["responses"]["200"]["content"]["application/json"];
 
 export const useTracks = (
     params?: TrackParams,
@@ -88,10 +90,9 @@ export const useUpdateTrack = (
 
             if (previousList) {
                 queryClient.setQueryData<TrackList>(key, (old) => ({
-                    data: old?.data.map((t) =>
+                    data: old?.data?.map((t) =>
                         t.id === id ? { ...t, ...newData } : t
                     ) ?? [],
-                    meta: previousList.meta,
                 }));
             }
 

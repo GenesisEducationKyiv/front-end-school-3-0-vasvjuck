@@ -1,10 +1,12 @@
-import React from 'react';
-import { TrackCard } from '@/components/app/TrackCard';
+import React, { lazy, Suspense } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Music2 } from 'lucide-react';
-import { Track } from '@/schema'
+import type { Track } from '@/schema'
+
+const TrackCard = lazy(() => import('./TrackCard'));
+
 interface TracksListProps {
     tracks: Track[];
     isLoading: boolean;
@@ -70,7 +72,17 @@ export const TracksList: React.FC<TracksListProps> = ({
                         onCheckedChange={(checked) => onSelect(id, checked as boolean)}
                         className="absolute z-10 top-2 right-2 shadow-lg"
                     />
-                    <TrackCard track={{ id, ...track }} />
+                    <Suspense fallback={<div className="relative flex flex-col justify-between gap-4 p-4 bg-card rounded-2xl shadow-sm animate-pulse">
+                        <div className="flex items-center gap-4 justify-between w-full">
+                            <Skeleton className="w-16 h-16 rounded-lg" />
+                            <div className="flex-grow space-y-2">
+                                <Skeleton className="h-4 w-3/4 rounded-md" />
+                                <Skeleton className="h-3 w-1/2 rounded-md" />
+                            </div>
+                        </div>
+                    </div>}>
+                        <TrackCard track={{ id, ...track }} />
+                    </Suspense>
                 </div>
             ))}
         </div>

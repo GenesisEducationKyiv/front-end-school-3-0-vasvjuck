@@ -4,7 +4,8 @@ import {
 } from '@tanstack/react-query';
 import { tracksApi } from '@/lib/api/tracks';
 import type { Track, FileInput, ApiError } from '@/schema';
-import { MutationConfig, trackKeys } from './useTracks';
+import { trackKeys } from './useTracks';
+import type { MutationConfig } from './useTracks';
 
 export const useUploadTrackFile = (
     trackId: string,
@@ -12,7 +13,7 @@ export const useUploadTrackFile = (
 ) => {
     const queryClient = useQueryClient();
     return useMutation<Track, ApiError, FileInput>({
-        mutationFn: (file: File) => tracksApi.uploadFile(trackId, file),
+        mutationFn: ({ file }) => tracksApi.uploadFile(trackId, file),
         onSuccess: () =>
             queryClient.invalidateQueries({ queryKey: trackKeys.lists() }),
         ...options,
