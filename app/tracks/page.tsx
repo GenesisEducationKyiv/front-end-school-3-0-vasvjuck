@@ -16,7 +16,6 @@ import { BulkActions } from '@/components/app/actions/BulkActions';
 import { useTrackStore } from '@/store/useTrackStore';
 import type { Track } from '@/schema';
 
-// Component that uses useSearchParams - must be wrapped in Suspense
 function TracksPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -150,7 +149,6 @@ function TracksPageContent() {
   );
 }
 
-// Main component that wraps the content in Suspense
 export default function MusicPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
