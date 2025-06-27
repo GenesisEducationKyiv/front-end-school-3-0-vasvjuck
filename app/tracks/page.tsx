@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useGenres } from '@/hooks/api/useGenres';
 import { useDebouncedSearch } from '@/hooks/common/useDebounceSearch';
 import { usePagination } from '@/hooks/common/usePagination';
-import { useDeleteTracks } from '@/hooks/api/useTracks';
+import { useDeleteTracks, useTracks } from '@/hooks/api/useTracks';
 import { Separator } from '@/components/ui/separator';
 import { FilterSelect, SearchInput, SortOrderToggle } from '@/components/app/FilterControls';
 import { TracksList } from '@/components/app/TracksList';
@@ -13,80 +13,42 @@ import { PaginationControls } from '@/components/app/PaginationControls';
 import { SORT_OPTIONS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { BulkActions } from '@/components/app/actions/BulkActions';
-import { O, R } from '@mobily/ts-belt';
-import { useTracksV2 } from '@/hooks/api/useTracksV2';
-import type { TrackList } from '@/hooks/api/useTracks';
+import { useTrackStore } from '@/store/useTrackStore';
 
 export default function MusicPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const getParam = (key: string, fallback: string): string =>
-    O.getWithDefault(O.fromNullable(searchParams.get(key)), fallback);
+  const {
+    page, setPage,
+    sort, setSort,
+    order, toggleOrder,
+    genre, setGenre,
+    searchTerm, setSearchTerm,
+    selectedIds, selectOne, deselectOne, selectAll, clearSelection,
+  } = useTrackStore();
 
-  const [page, setPage] = useState<number>(Number(getParam('page', '1')));
-  const [sort, setSort] = useState<string>(getParam('sort', 'createdAt'));
-  const [order, setOrder] = useState<'asc' | 'desc'>(
-    getParam('order', 'desc') as 'asc' | 'desc'
-  );
-  const [genre, setGenre] = useState<string>(getParam('genre', 'All'));
-  const [searchTerm, setSearchTerm] = useState<string>(getParam('search', ''));
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  useEffect(() => {
+    const getParam = (key: string, fallback: string) =>
+      searchParams.get(key) ?? fallback;
 
-  const debouncedSearch = useDebouncedSearch(searchTerm);
-  const limit = 8;
-  const { data: result, isLoading } = useTracksV2({
-    page,
-    limit,
-    sort,
-    order,
-    genre: genre !== 'All' ? genre : undefined,
-    search: debouncedSearch || undefined,
-  });
+    const initialPage = Number(getParam('page', '1'));
+    setPage(initialPage);
 
+    const initialSort = getParam('sort', 'createdAt');
+    setSort(initialSort);
 
-  const { data: genres = [] } = useGenres();
-  const fallback = { data: [], meta: { totalPages: 1 } };
+    const initialOrder = (getParam('order', 'desc') as 'asc' | 'desc');
+    if (initialOrder !== order) {
+      useTrackStore.setState({ order: initialOrder });
+    }
 
-  const trackList: TrackList = result
-    ? R.getWithDefault(result, fallback)
-    : fallback;
+    const initialGenre = getParam('genre', 'All');
+    setGenre(initialGenre);
 
-  const totalPages = trackList?.meta?.totalPages;
-  const { pages, goTo } = usePagination(totalPages, page, setPage);
-  const { mutate: deleteMutation } = useDeleteTracks();
-
-  const allIds = useMemo(() => trackList.data.map(t => t.id), [trackList]);
-  const isAllSelected = selectedIds.length > 0 && selectedIds.length === allIds.length;
-
-  const handleSelectAll = (checked: boolean) => setSelectedIds(checked ? allIds : []);
-  const handleSelectOne = (id: string, checked: boolean) =>
-    setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((el) => el !== id)));
-
-  const handleSortChange = (val: string) => {
-    setSort(val);
-    setPage(1);
-  };
-
-  const handleGenreChange = (val: string) => {
-    setGenre(val);
-    setPage(1);
-  };
-
-  const toggleOrder = () => {
-    setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    setPage(1);
-  };
-
-  const confirmDelete = () => {
-    deleteMutation(selectedIds, {
-      onSuccess: () => {
-        toast.success("Tracks were successfully deleted");
-        setSelectedIds([]);
-      },
-      onError: () => toast.error("Deletion failed"),
-    });
-  };
+    const initialSearch = getParam('search', '');
+    setSearchTerm(initialSearch);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -95,9 +57,50 @@ export default function MusicPage() {
     if (order !== 'desc') params.set('order', order);
     if (genre !== 'All') params.set('genre', genre);
     if (searchTerm) params.set('search', searchTerm);
-
     router.replace(`?${params.toString()}`);
   }, [page, sort, order, genre, searchTerm, router]);
+
+  const debouncedSearch = useDebouncedSearch(searchTerm);
+  const limit = 8;
+  const { data: result, isLoading } = useTracks({
+    page,
+    limit,
+    sort,
+    order,
+    genre: genre !== 'All' ? genre : undefined,
+    search: debouncedSearch || undefined,
+  });
+
+  const { data: genres = [] } = useGenres();
+  const fallback = { data: [], meta: { totalPages: 1 } };
+  const trackList = result ? result : fallback;
+  const totalPages = trackList.meta.totalPages;
+  const { pages, goTo } = usePagination(totalPages, page, setPage);
+  const { mutate: deleteMutation } = useDeleteTracks();
+
+  const allIds = useMemo(() => trackList.data.map(t => t.id), [trackList]);
+  const isAllSelected = selectedIds.length > 0 && selectedIds.length === allIds.length;
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) selectAll(allIds);
+    else clearSelection();
+  };
+  const handleSelectOne = (id: string, checked: boolean) => {
+    if (checked) selectOne(id);
+    else deselectOne(id);
+  };
+
+  const handleSortChange = (val: string) => setSort(val);
+  const handleGenreChange = (val: string) => setGenre(val);
+  const confirmDelete = () => {
+    deleteMutation(selectedIds, {
+      onSuccess: () => {
+        toast.success("Tracks were successfully deleted");
+        clearSelection();
+      },
+      onError: () => toast.error("Deletion failed"),
+    });
+  };
 
   return (
     <div className="flex gap-5 flex-col h-[calc(100vh-112px)]">
