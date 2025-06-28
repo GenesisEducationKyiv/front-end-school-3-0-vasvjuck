@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { isValidUrl, isApiError } from '../../lib/utils';
 
 describe('isValidUrl - blackbox', () => {
@@ -25,13 +25,13 @@ describe('isValidUrl - whitebox using mocks', () => {
     it('should return false if URL constructor throws', () => {
         const URLMock = vi.fn(() => { throw new Error('Invalid'); });
 
-        const originalURL = global.URL;
-        // @ts-ignore
-        global.URL = URLMock;
+        vi.stubGlobal('URL', URLMock);
 
         const result = isValidUrl('invalid-url');
         expect(result).toBe(false);
+    });
 
-        global.URL = originalURL;
+    afterEach(() => {
+        vi.unstubAllGlobals();
     });
 });
