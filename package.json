@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:types": "openapi-typescript ./openapi.json --output ./lib/api/types.ts"
+    "generate:types": "openapi-typescript ./openapi.json --output ./lib/api/types.ts",
+    "test": "vitest",
+    "test:ui": "npx playwright test --ui",
+    "test-ct": "playwright test -c playwright-ct.config.ts",
+    "test-ct:ui": "playwright test -c playwright-ct.config.ts --ui"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -47,17 +51,22 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
-    "@tailwindcss/postcss": "^4.1.4",
+    "@playwright/experimental-ct-react": "^1.53.1",
+    "@playwright/test": "^1.53.1",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/vite": "^4.1.10",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",
     "eslint-config-next": "15.3.1",
     "lodash.debounce": "^4.0.8",
     "openapi-typescript": "^7.6.1",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.33.0"
+    "typescript-eslint": "^8.33.0",
+    "vitest": "^3.2.4"
   }
 }
