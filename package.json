@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate:types": "openapi-typescript ./openapi.json --output ./lib/api/types.ts",
-    "websocket-server": "node lib/websocket/server.js"
+    "websocket-server": "tsx lib/websocket/server.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -60,6 +60,7 @@
     "lodash.debounce": "^4.0.8",
     "openapi-typescript": "^7.6.1",
     "tailwindcss": "^4.1.4",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0"
   }

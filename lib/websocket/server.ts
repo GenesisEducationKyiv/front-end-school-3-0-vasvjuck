@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { SAMPLE_TRACKS } from './constants.js';
+import { SAMPLE_TRACKS } from './constants';
 
 let activeTrackName: string = SAMPLE_TRACKS[0]!;
 const connectedClients: Set<WebSocket> = new Set();
