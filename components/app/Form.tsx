@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import { trackSchema } from "@/lib/validations/trackSchema"
-import { TrackInput } from '@/schema'
+import type { TrackInput } from '@/schema'
 import { useGenres } from "@/hooks/api/useGenres"
 import Image from "next/image"
 import { isValidUrl } from "@/lib/utils"

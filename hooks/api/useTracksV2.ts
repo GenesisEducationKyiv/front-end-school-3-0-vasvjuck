@@ -1,9 +1,10 @@
-import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import type { UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { R } from '@mobily/ts-belt';
-import { tracksApi, TrackQueryParams } from '@/lib/api/tracks';
+import { tracksApi } from '@/lib/api/tracks';
+import type { TrackQueryParams } from '@/lib/api/tracks';
 import type { TrackList } from './useTracks';
 import { isApiError } from '@/lib/utils';
-
 
 export const fetchTracks = async (
     params: TrackQueryParams = {}
@@ -12,10 +13,15 @@ export const fetchTracks = async (
         const data = await tracksApi.get(params);
         return R.Ok(data);
     } catch (error: unknown) {
-        const apiError = isApiError(error)
-            ? error
-            : new Error(String(error));
-        return R.Error(apiError);
+        let err: Error;
+        if (error instanceof Error) {
+            err = error;
+        } else if (isApiError(error)) {
+            err = new Error(error.message);
+        } else {
+            err = new Error(String(error));
+        }
+        return R.Error(err);
     }
 };
 
