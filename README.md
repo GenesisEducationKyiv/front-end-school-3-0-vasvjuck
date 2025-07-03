@@ -49,3 +49,22 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 ```bash
 npm run dev
 ```
+
+---
+
+## 📦 Build Analysis & Optimization
+
+### Bundle Analysis
+- The project uses [@next/bundle-analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) to inspect bundle size and optimize code splitting.
+- To generate a bundle analysis report:
+
+```bash
+npm run build:analyze
+```
+- This will output a `bundle-analysis.html` file in the project root, which you can open in your browser to inspect the bundle.
+
+### Additional Scripts
+- `npm run clean` – Remove build artifacts (`.next`, `out`)
+- `npm run build:prod` – Clean and build for production
+- `npm run lint:fix` – Auto-fix lint issues
+- `npm run type-check` – Run TypeScript type checking

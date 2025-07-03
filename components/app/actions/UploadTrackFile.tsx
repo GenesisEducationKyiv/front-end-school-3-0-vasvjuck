@@ -24,8 +24,9 @@ import {
 import { toast } from "sonner";
 import { useUploadTrackFile, useRemoveTrackFile } from "@/hooks/api/useTrackFile";
 import { registerAndToggle } from "@/lib/common/audioManager";
-import { FileInput, fileSchema } from "@/lib/validations/trackFileSchema";
-import { Track } from "@/schema";
+import { fileSchema } from "@/lib/validations/trackFileSchema";
+import type { FileInput } from "@/lib/validations/trackFileSchema";
+import type { Track } from "@/schema";
 import { isApiError } from "@/lib/utils";
 
 interface UploadTrackFileProps {
@@ -58,7 +59,7 @@ export const UploadTrackFile: React.FC<UploadTrackFileProps> = ({ track }) => {
 
     const onSubmit = async ({ file }: FileInput) => {
         try {
-            await upload.mutateAsync(file);
+            await upload.mutateAsync({ file });
             toast.success("Audio file uploaded.");
             reset();
         } catch (err) {
