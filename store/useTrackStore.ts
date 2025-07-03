@@ -25,7 +25,7 @@ interface TrackUIState {
     clearSelection: () => void;
 }
 
-export const useTrackStore = create<TrackUIState>((set, get) => ({
+export const useTrackStore = create<TrackUIState>((set) => ({
     page: 1,
     setPage: p => set({ page: p }),
 
