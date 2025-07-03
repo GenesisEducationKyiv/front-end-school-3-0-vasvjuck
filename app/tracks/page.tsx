@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { FilterSelect, SearchInput, SortOrderToggle } from '@/components/app/FilterControls';
 import { TracksList } from '@/components/app/TracksList';
 import { PaginationControls } from '@/components/app/PaginationControls';
+import { ActiveTrackDisplay } from '@/components/app/ActiveTrackDisplay';
 import { SORT_OPTIONS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { BulkActions } from '@/components/app/actions/BulkActions';
@@ -108,6 +109,9 @@ function TracksPageContent() {
 
   return (
     <div className="flex gap-5 flex-col h-[calc(100vh-112px)]">
+      <div className="flex justify-center">
+        <ActiveTrackDisplay />
+      </div>
       <BulkActions
         isAllSelected={isAllSelected}
         selectedCount={selectedIds.length}
