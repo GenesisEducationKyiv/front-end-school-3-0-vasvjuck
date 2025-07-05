@@ -64,7 +64,7 @@
     "@tailwindcss/vite": "^4.1.10",
     "@next/bundle-analyzer": "^15.3.4",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
