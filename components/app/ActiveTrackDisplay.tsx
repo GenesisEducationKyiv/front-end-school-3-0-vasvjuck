@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useActiveTrack } from '@/hooks/api/useActiveTrack';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

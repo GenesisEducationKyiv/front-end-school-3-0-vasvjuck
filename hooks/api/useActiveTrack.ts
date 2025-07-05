@@ -94,7 +94,7 @@ export function useActiveTrack() {
         });
     };
 
-    const isConnected = () => {
+    const checkIsConnected = () => {
         return wsRef.current?.readyState === WebSocket.OPEN;
     };
 
@@ -110,6 +110,6 @@ export function useActiveTrack() {
         ...state,
         connect,
         disconnect,
-        isConnected,
+        checkIsConnected,
     };
 } 
