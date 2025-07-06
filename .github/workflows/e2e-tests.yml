@@ -2,9 +2,9 @@ name: E2E Tests
 
 on:
   push:
-    branches: [main, feat/ci-cd-processes]
+    branches: [main]
   pull_request:
-    branches: [main, feat/ci-cd-processes]
+    branches: [main]
   workflow_dispatch:
 
 env:
