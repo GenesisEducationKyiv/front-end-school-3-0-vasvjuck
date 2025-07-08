@@ -45,10 +45,12 @@ export const TrackCard = ({ track }: TrackProps) => {
                 <div className="flex-shrink-0">
                     <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
                         <Image
-                            src={track?.coverImage || '/track_placeholder.png'}
+                            src={track?.coverImage || '/track_placeholder.webp'}
                             alt={track.title}
                             width={72}
                             height={72}
+                            sizes="(max-width: 600px) 50vw, 72px"
+                            loading="lazy"
                             className={cn("object-cover",
                                 track.audioFile && "blur-xs")}
                         />
