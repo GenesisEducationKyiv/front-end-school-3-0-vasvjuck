@@ -28,12 +28,12 @@ const containerVariants = {
     visible: {
         height: '11vh',
         opacity: 1,
-        transition: { type: 'spring', stiffness: 450, damping: 40 },
+        transition: { type: 'spring' as const, stiffness: 450, damping: 40 },
     },
     exit: {
         height: 0,
         opacity: 0,
-        transition: { duration: 0.2, ease: 'easeInOut' },
+        transition: { duration: 0.2, ease: 'easeInOut' as const },
     },
 };
 
